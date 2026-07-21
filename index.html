@@ -1,3 +1,445 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Date mit Nico 💕</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-size: cover;
+            background-position: center;
+            transition: background-image 0.8s ease-in-out;
+            overflow-x: hidden;
+        }
+
+        /* Glaskarten-Design */
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(230, 57, 70, 0.2);
+            border: 2px solid #ffccd5;
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1 {
+            color: #d62828;
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #4a4a4a;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .step {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .step.active {
+            display: flex;
+        }
+
+        /* Buttons */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            position: relative;
+            min-height: 80px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-yes, .btn-next, .btn-wa {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .btn-wa {
+            background-color: #25d366; /* WhatsApp Grün */
+            font-size: 18px;
+            padding: 15px 30px;
+        }
+
+        .btn-yes:hover, .btn-next:hover {
+            background-color: #d62828;
+            transform: scale(1.05);
+        }
+
+        .btn-wa:hover {
+            background-color: #1eb857;
+            transform: scale(1.05);
+        }
+
+        .btn-no {
+            background-color: #ffb703;
+            color: #000;
+            padding: 18px 35px; /* Etwas größer */
+            font-size: 18px;
+            position: absolute;
+            transition: all 0.15s ease-out;
+            z-index: 10;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* Formularfelder */
+        input[type="datetime-local"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 2px solid #ff4d6d;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            background-color: #fff0f5;
+            color: #d62828;
+        }
+
+        /* Aktivitäten Liste */
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 5px;
+            text-align: left;
+        }
+
+        .option-item {
+            background: #fff0f5;
+            border: 2px solid #ffccd5;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 600;
+            color: #a4133c;
+        }
+
+        .option-item:hover {
+            border-color: #ff4d6d;
+            background-color: #ffe6ebd8;
+        }
+
+        .option-item.selected {
+            background-color: #ff4d6d;
+            color: white;
+            border-color: #c9184a;
+        }
+
+        textarea {
+            width: 100%;
+            border: 2px solid #ffccd5;
+            border-radius: 10px;
+            padding: 8px;
+            font-size: 14px;
+            margin-top: 5px;
+            resize: none;
+            outline: none;
+        }
+
+        /* Sterne Bewertung */
+        .stars {
+            font-size: 35px;
+            cursor: pointer;
+            user-select: none;
+            margin: 20px 0;
+        }
+
+        .star {
+            color: #ffb703;
+            transition: transform 0.1s;
+            display: inline-block;
+        }
+
+        /* Zusammenfassung */
+        .summary-box {
+            background: #fff0f5;
+            border: 2px solid #ff4d6d;
+            border-radius: 15px;
+            padding: 15px;
+            text-align: left;
+            margin-top: 15px;
+        }
+
+        .summary-box p {
+            margin: 8px 0;
+            color: #800f2f;
+        }
+    </style>
+</head>
+<body id="bg">
+
+<div class="card">
+
+    <div id="step1" class="step active">
+        <div>
+            <h1>Rosalie, willst du dich mit Nico treffen? 🥺💕✨</h1>
+        </div>
+        <div class="btn-container">
+            <button class="btn-yes" onclick="nextStep(2)">Ja 🥰</button>
+            <button class="btn-no" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">Nein 😜</button>
+        </div>
+        <div></div>
+    </div>
+
+    <div id="step2" class="step">
+        <div>
+            <h1>Haha, das war auch keine Frage! 😉😜❤️</h1>
+            <p>Als ob du Nein sagen könntest... Schön, dass du am Start bist! ✨</p>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="nextStep(3)">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step3" class="step">
+        <div>
+            <h1>Sehr cool, Nico freut sich schon riesig auf das Treffen! 🎉✨🔥</h1>
+            <p>Lass uns direkt die Details zusammen planen... 👇</p>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="nextStep(4)">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step4" class="step">
+        <div>
+            <h1>Wann kannst du denn? 📅🕰️</h1>
+            <p>Wähle hier dein Wunschdatum und die Uhrzeit aus:</p>
+            <input type="datetime-local" id="dateTimeInput">
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="saveDateTime()">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step5" class="step">
+        <div>
+            <h1>Was machen wir Schönes? 🎲✨</h1>
+            <div class="options-list">
+                <div class="option-item" onclick="selectOption(this, 'Nico überrascht dich 🎁')">1. Nico überrascht dich 🎁</div>
+                <div class="option-item" onclick="selectOption(this, 'Motorradfahren 🏍️')">2. Motorradfahren 🏍️</div>
+                <div class="option-item" onclick="selectOption(this, 'bei Nico chillen 🍕')">3. bei Nico chillen 🍕</div>
+                <div class="option-item" onclick="selectOption(this, 'NFT Skybar 🍸')">4. NFT Skybar 🍸</div>
+                <div class="option-item" onclick="selectOption(this, 'Städtetrip (1 Tag) 🧳')">5. Städtetrip (1 Tag) 🧳</div>
+                <div class="option-item" onclick="selectOption(this, 'Trampolinhalle 🤸')">6. Trampolinhalle 🤸</div>
+                <div class="option-item" onclick="selectOption(this, 'Nürburgring 🏎️')">7. Nürburgring 🏎️</div>
+                <div class="option-item" onclick="selectOption(this, 'Fahren, soweit unsere Playlist reicht 🎶')">8. Fahren, soweit unsere Playlist reicht 🎶</div>
+                <div class="option-item" id="customOption" onclick="selectCustomOption(this)">
+                    9. Eigene Idee:
+                    <textarea id="customText" rows="2" placeholder="Deine eigene Idee eintragen..." onclick="event.stopPropagation();"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="saveActivity()">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step6" class="step">
+        <div>
+            <h1>Richtig gute Idee, Rosalie, hab mega Bock darauf! 🔥😍</h1>
+            <p>Natürlich hat Nico noch andere kleine Details und Überraschungen für euer Treffen geplant... 😉✨🎉</p>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="nextStep(7)">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step7" class="step">
+        <div>
+            <h1>Wie fandest du die Website? ⭐🤩</h1>
+            <p>Gib gerne deine Bewertung ab:</p>
+            <div class="stars" onclick="forceFiveStars()" onmouseover="forceFiveStars()">
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+                <span class="star">★</span>
+            </div>
+            <p id="starText" style="font-weight: bold; color: #e63946;">5 von 5 Sternen! (Perfekt! 😉✨)</p>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="nextStep(8)">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step8" class="step">
+        <div>
+            <h1>Zusammenfassung 📋✨</h1>
+            <div class="summary-box">
+                <p><strong>Zugesagt:</strong> Ja! 🥰❤️</p>
+                <p><strong>Wann:</strong> <span id="summaryDate">Noch nicht gewählt</span></p>
+                <p><strong>Was machen wir:</strong> <span id="summaryActivity">Noch nicht gewählt</span></p>
+            </div>
+        </div>
+        <div class="footer-nav">
+            <button class="btn-next" onclick="nextStep(9)">Weiter ➔</button>
+        </div>
+    </div>
+
+    <div id="step9" class="step">
+        <div>
+            <h1>Perfekt, du bist die Beste! ❤️✨</h1>
+            <p>Nico kümmert sich jetzt um alles!</p>
+            <p style="font-size: 14px; color: #666; margin-top: 15px;">Klicke unten, um deine Auswahl direkt per WhatsApp an Nico zu schicken: 👇</p>
+            <br>
+            <button class="btn-wa" onclick="sendToWhatsApp()">Ergebnis an Nico schicken 📱✨</button>
+        </div>
+        <div></div>
+    </div>
+
+</div>
+
+<script>
+    // Hintergrundbilder (Berge & Strände Unsplash High Quality)
+    const backgrounds = [
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80', // Strand 1
+        'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80', // Strand 2
+        'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80', // Berge 1
+        'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=80', // Berge 2
+        'https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&w=1200&q=80', // Strand 3
+        'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=1200&q=80', // Berge 3
+        'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?auto=format&fit=crop&w=1200&q=80', // Strand 4
+        'https://images.unsplash.com/photo-1465056836041-7f43ac27dcb5?auto=format&fit=crop&w=1200&q=80', // Berge 4
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80'  // Finale Strand
+    ];
+
+    let selectedDate = '';
+    let selectedActivity = '';
+
+    // Setze Start-Hintergrund
+    document.body.style.backgroundImage = `url('${backgrounds[0]}')`;
+
+    // Ausweichender "Nein"-Button
+    function moveButton() {
+        const btn = document.getElementById('noBtn');
+        const x = Math.floor(Math.random() * 250) - 125;
+        const y = Math.floor(Math.random() * 250) - 125;
+        btn.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    // Seiten-Navigation mit Hintergrundwechsel
+    function nextStep(stepNumber) {
+        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+        document.getElementById('step' + stepNumber).classList.add('active');
+        
+        // Hintergrund ändern
+        if(backgrounds[stepNumber - 1]) {
+            document.body.style.backgroundImage = `url('${backgrounds[stepNumber - 1]}')`;
+        }
+    }
+
+    // Datum speichern
+    function saveDateTime() {
+        const input = document.getElementById('dateTimeInput').value;
+        if (!input) {
+            alert('Bitte wähle ein Datum und eine Uhrzeit aus! 😊📅');
+            return;
+        }
+        const dateObj = new Date(input);
+        selectedDate = dateObj.toLocaleString('de-DE', { 
+            day: '2-digit', 
+            month: '2-digit', 
+            year: 'numeric', 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        }) + ' Uhr';
+        
+        document.getElementById('summaryDate').innerText = selectedDate;
+        nextStep(5);
+    }
+
+    // Aktivität auswählen
+    function selectOption(element, text) {
+        document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedActivity = text;
+    }
+
+    function selectCustomOption(element) {
+        document.querySelectorAll('.option-item').forEach(item => item.classList.remove('selected'));
+        element.classList.add('selected');
+    }
+
+    function saveActivity() {
+        const customText = document.getElementById('customText').value;
+        const customItem = document.getElementById('customOption');
+
+        if (customItem.classList.contains('selected') && customText.trim() !== '') {
+            selectedActivity = 'Eigene Idee: ' + customText;
+        }
+
+        if (!selectedActivity) {
+            alert('Bitte wähle eine Option aus! 😊🎲');
+            return;
+        }
+
+        document.getElementById('summaryActivity').innerText = selectedActivity;
+        nextStep(6);
+    }
+
+    // Sterne-Bewertung Trick
+    function forceFiveStars() {
+        document.getElementById('starText').innerText = "5 von 5 Sternen! (Perfekt! 😉✨)";
+    }
+
+    // WhatsApp Weiterleitung
+    function sendToWhatsApp() {
+        const phoneNumber = "4917670354100";
+        const message = `Hey Nico! Ich habe deine Date-Einladung angenommen 🥰❤️%0A%0A📅 Wann: ${selectedDate}%0A🎲 Was: ${selectedActivity}%0A%0AIch freue mich schon auf dich! ✨`;
+        window.open(`https://wa.me/${phoneNumber}?text=${message}`, '_blank');
+    }
+</script>
+
+</body>
+</html>
 
 
 
